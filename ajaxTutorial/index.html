@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+	<meta charset="UTF-8">
+	<title>Ajax and Angularjs Tutorial by Merlon Veloso</title>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+</head>
+<body ng-controller="IndexController">
+
+	<div class="container">
+		
+		<div class="table-responsive main-table-wrapper">
+
+
+			<div class="row">
+
+				<div class="col-lg-4">
+					<button 
+					style="width: 150px;" 
+					class="btn btn-success" 
+					ng-click="openModalCustomer()"
+					>Add Customer</button>
+				</div>
+
+				<div class="col-lg-4 pull-right">
+					<div class="form-group">
+						<div class="input-group">
+							<span class="input-group-addon">Search</span>
+							<input class="form-control" type="search" placeholder="Searh here" ng-model="search" />
+						</div>
+					</div>
+				</div>
+
+			</div> <!-- <div class="row"> -->
+
+			
+			<table class="table table-responsive table-hover" id="myTable">
+				
+				<thead>
+					<tr>
+						<th>First Name</th>
+						<th>Last Name</th>
+						<th>Age</th>
+						<th>address</th>
+						<th>Contact Number</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="customer in customers | filter:search">
+						<td>{{customer.firstname}}</td>
+						<td>{{customer.lastname}}</td>
+						<td>{{customer.age}}</td>
+						<td>{{customer.address}}</td>
+						<td>{{customer.contact_number}}</td>
+						<td>
+							<button 
+							class="btn btn-danger" 
+							ng-click="deleteCustomer(customer)"
+							>Delete</button>
+
+							<button 
+							class="btn btn-success" 
+							ng-click="updateCustomer(customer)"
+							>Update</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
+	
+	</div> <!-- <div class="container"> -->
+
+	<!-- Modals -->
+	<div id="modal-customer" class="modal fade">
+		
+		<div class="modal-dialog">
+			
+			<div class="modal-content">
+				
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">{{modalData.title}}</h4>
+				</div> <!-- <div class="modal-header"> -->
+
+				<div class="modal-body">
+
+					<div class="inner-content" style="padding: 1em;">
+
+						<form name="formCustomer" role="form" novalidate>
+							
+							<div class="row">
+								<div class="col-lg-12">
+									<div class="form-group">
+										<label class="control-label" For="inputFirstname">First Name</label>
+										<input style="text-transform: capitalize;" id="inputFirstname" class="form-control" type="text" ng-model="modalData.firstname">
+									</div>
+								</div>
+							</div> <!-- <div class="row"> -->
+
+							<div class="row">
+								<div class="col-lg-12">
+									<div class="form-group">
+										<label class="control-label" For="inputLastname">Last Name</label>
+										<input style="text-transform: capitalize;" id="inputLastname" class="form-control" type="text" ng-model="modalData.lastname">
+									</div>
+								</div>
+							</div> <!-- <div class="row"> -->
+
+							<div class="row">
+								<div class="col-lg-12">
+									<div class="form-group has-feedback"
+									ng-class="{'has-error' : formCustomer.inputAge.$invalid}">
+										<label class="control-label" For="inputAge">Age</label>
+										<input 
+										id="inputAge" 
+										name="inputAge"
+										class="form-control" 
+										type="text" 
+										ng-pattern="/^[0-9]*$/"
+										ng-model="modalData.age">
+									<span style="color:red;" ng-show="formCustomer.inputAge.$invalid">
+										Numbers only
+									</span>
+									</div>
+								</div>
+							</div> <!-- <div class="row"> -->
+
+							<div class="row">
+								<div class="col-lg-12">
+									<div class="form-group">
+										<label class="control-label" For="inputAddress">Address</label>
+										<input style="text-transform: capitalize;" id="inputAddress" class="form-control" type="text" ng-model="modalData.address">
+									</div>
+								</div>
+							</div> <!-- <div class="row"> -->
+
+							<div class="row">
+								<div class="col-lg-12">
+									<div class="form-group has-feedback"
+									ng-class="{'has-error':formCustomer.inputContactNumber.$invalid}">
+										<label class="control-label" For="inputContactNumber">Contact Number</label>
+										<input 
+										id="inputContactNumber"
+										name="inputContactNumber" 
+										class="form-control" 
+										type="text" 
+										ng-pattern="/^[0-9]*$/"
+										ng-model="modalData.contact_number"
+										>
+									<span style="color:red;" ng-show="formCustomer.inputContactNumber.$invalid">
+										Numbers only
+									</span>
+									</div>
+								</div>
+							</div> <!-- <div class="row"> -->
+
+						</form>
+
+					</div>
+					
+				</div> <!-- <div class="modal-body"> -->
+
+				<div class="modal-footer text-right">
+					<button 
+					class="btn btn-info" 
+					data-dismiss="modal"
+					ng-show="modalData.done"
+					>Close</button>
+
+					<button 
+					class="btn btn-info" 
+					data-dismiss="modal"
+					ng-hide="modalData.done"
+					>Cancel</button>
+
+					<button 
+					class="btn btn-success" 
+					ng-click="openModalConfirmation()" 
+					ng-disabled="!formCustomer.$dirty || formCustomer.$invalid || formCustomer.$pristine"
+					>Save</button>
+				</div>
+
+			</div> <!-- <div class="modal-content"> -->
+
+		</div> <!-- <div class="modal-dialog"> -->
+
+	</div> <!-- <div id="modal-customer" class="modal fade"> -->
+
+	<!-- submodals -->
+	<div id="submodal-confirmation" class="modal fade">
+		
+		<div class="modal-dialog modal-sm">
+				
+			<div class="modal-content">
+				
+				<div class="modal-header">
+					<button type="button" class="close" modal-dismiss="modal">&times;</button>
+					<h4 class="modal-title">{{subModalData.title}}</h4>
+				</div>
+
+				<div class="modal-body">
+					
+					<span>{{subModalData.bodyMessage}}</span>
+
+				</div> <!-- <div class="modal-body"> -->
+
+				<div class="modal-footer text-right">
+					<button 
+					type="button" 
+					class="btn btn-info"
+					ng-hide="subModalData.showDoneButton" 
+					data-dismiss="modal"
+					>Cancel</button>
+
+					<button 
+					type="button" 
+					class="btn btn-success"
+					ng-hide="subModalData.showDoneButton" 
+					ng-click="confirm()">
+					Confirm</button>
+
+					<button 
+					type="button" 
+					class="btn btn-primary" 
+					ng-click="undoCustomer()" 
+					ng-show="subModalData.showUndoButton"
+					>Undo Changes</button>
+
+					<button 
+					type="button" 
+					class="btn btn-primary" 
+					ng-click="done()" 
+					ng-show="subModalData.showDoneButton"
+					>Done</button>
+
+				</div> <!-- <div class="modal-footer text-right"> -->
+
+			</div> <!-- <div class="modal-content"> -->
+
+		</div> <!-- <div class="modal-dialog"> -->
+
+	</div> <!-- <div id="submodal-confirmation" class="modal fade"> -->
+
+	<script type="text/javascript" src="js/jquery/jquery-3.1.1.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/angularjs/angular.min.js"></script>
+	<script type="text/javascript" src="app/app.js"></script>
+
+	<!-- controller -->
+	<script type="text/javascript" src="app/controller/index-ctrl.js"></script>
+
+	<!-- service -->
+	<script type="text/javascript" src="app/service/index-service.js"></script>
+	<script type="text/javascript" src="app/service/common.js"></script>
+
+</body>
+</html>
